@@ -11,7 +11,11 @@ Categories=Chat;Network;InstantMessaging;Qt;
 MimeType=x-scheme-handler/tg;x-scheme-handler/tonsite;
 Keywords=tg;chat;im;messaging;messenger;sms;telegram;tdesktop;
 Actions=quit;
-DBusActivatable=true
+# D-Bus активация выключена намеренно: в этом форке нет кода, который владеет
+# именем com.divegram.desktop (single_instance/remote_control отсутствуют), так
+# что StartServiceByName всегда упирается в таймаут и KDE показывает
+# "Did not receive a reply". Запуск идёт напрямую через Exec.
+DBusActivatable=false
 SingleMainWindow=true
 X-GNOME-UsesNotifications=true
 X-GNOME-SingleWindow=true

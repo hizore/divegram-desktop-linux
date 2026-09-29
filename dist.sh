@@ -44,11 +44,12 @@ if [ -z "$DESKTOP" ]; then
 fi
 METAINFO="${ROOT}/lib/xdg/com.divegram.desktop.metainfo.xml"
 [ -f "$METAINFO" ] || METAINFO=""
-DBUS_SERVICE="${ROOT}/lib/xdg/com.divegram.desktop.service"
-[ -f "$DBUS_SERVICE" ] || DBUS_SERVICE=""
 ICON=""
-for c in "${ROOT}/Telegram/Resources/icons/tg/icon_512.png" \
-         "${ROOT}/Telegram/Resources/art/divegram/icon_512.png" \
+# Сначала собственный брендинг DiveGram, апстримная иконка Telegram — только
+# как запасной вариант: первый существующий файл и побеждает, поэтому порядок
+# здесь значим.
+for c in "${ROOT}/Telegram/Resources/art/divegram/icon_512.png" \
+         "${ROOT}/Telegram/Resources/icons/tg/icon_512.png" \
          "${ROOT}/Telegram/Resources/art/legacy/telegram.png"; do
     [ -f "$c" ] && { ICON="$c"; break; }
 done
@@ -107,13 +108,6 @@ make_tree() {
     if [ -f "$METAINFO" ]; then
         mkdir -p "$root/usr/share/metainfo"
         install -m0644 "$METAINFO" "$root/usr/share/metainfo/${APP_ID}.metainfo.xml"
-    fi
-    # D-Bus service обязателен: desktop entry объявляет DBusActivatable=true,
-    # и без .service запуск из меню падает с "The name is not activatable".
-    if [ -f "$DBUS_SERVICE" ]; then
-        mkdir -p "$root/usr/share/dbus-1/services"
-        sed 's|@CMAKE_INSTALL_FULL_BINDIR@|/usr/bin|g' "$DBUS_SERVICE" \
-            > "$root/usr/share/dbus-1/services/${APP_ID}.service"
     fi
 }
 
@@ -230,10 +224,9 @@ package() {
         "\$pkgdir/usr/share/icons/hicolor/512x512/apps/com.divegram.desktop.png"
     install -Dm644 "\$srcdir/divegram/usr/share/metainfo/com.divegram.desktop.metainfo.xml" \
         "\$pkgdir/usr/share/metainfo/com.divegram.desktop.metainfo.xml"
-    # Desktop entry объявляет DBusActivatable=true: без .service запуск из
-    # меню приложений падает с "The name is not activatable".
-    install -Dm644 "\$srcdir/divegram/usr/share/dbus-1/services/com.divegram.desktop.service" \
-        "\$pkgdir/usr/share/dbus-1/services/com.divegram.desktop.service"
+    # D-Bus service не ставится: в этом форке нет кода, который владеет именем
+    # com.divegram.desktop, поэтому активация по D-Bus всегда упирается в
+    # таймаут. Desktop entry объявляет DBusActivatable=false и запускает Exec.
     # библиотеки в зависимости поймали системные; если нужен полный самосодержащий пакет,
     # распакуй .tar.xz рядом и перенеси в opt/divegram + скрипт-лаунчер ld_library_path
 }
