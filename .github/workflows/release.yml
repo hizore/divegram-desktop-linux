@@ -1,0 +1,87 @@
+name: DiveGram Releases
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      TDESKTOP_API_ID: ${{ vars.TDESKTOP_API_ID }}
+      TDESKTOP_API_HASH: ${{ vars.TDESKTOP_API_HASH }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { submodules: recursive }
+      - name: Check API credentials
+        run: |
+          if [ -z "$TDESKTOP_API_ID" ] || [ -z "$TDESKTOP_API_HASH" ]; then
+            echo "::error::задайте repository variables TDESKTOP_API_ID и TDESKTOP_API_HASH"
+            exit 1
+          fi
+      - name: Render Dockerfile (their centos_env/Dockerfile is a jinja2 template -> gen_dockerfile.py)
+        run: |
+          python3 -m pip install --quiet --user jinja2
+          python3 Telegram/build/docker/centos_env/gen_dockerfile.py > Telegram/build/docker/centos_env/Dockerfile.generated
+      - name: Build our env image (rendered template -> one env)
+        run: |
+          docker build -t divegram_env -f Telegram/build/docker/centos_env/Dockerfile.generated .
+      - name: Configure (source root, API vars, Ninja Release)
+        run: |
+          docker run --rm -u 0 -v "$PWD:/usr/src/tdesktop" -w /usr/src/tdesktop \
+            divegram_env \
+            bash -lc 'set -e; rm -rf /usr/src/tdesktop/out-cc && mkdir -p /usr/src/tdesktop/out-cc && \
+              cmake -S /usr/src/tdesktop -B /usr/src/tdesktop/out-cc -G Ninja \
+                -DCMAKE_BUILD_TYPE=Release \
+                -DTDESKTOP_API_ID="$TDESKTOP_API_ID" \
+                -DTDESKTOP_API_HASH="$TDESKTOP_API_HASH"'
+      - name: Build Release
+        run: |
+          docker run --rm -v "$PWD:/usr/src/tdesktop" -w /usr/src/tdesktop \
+            divegram_env \
+            cmake --build /usr/src/tdesktop/out-cc --config Release --target Telegram -j"$(nproc)"
+      - name: Package (AppImage/deb/rpm/pkg/tar.xz)
+        run: |
+          VERSION="$(printf '%s' "${GITHUB_REF_NAME:-}" | sed 's/^v//')"
+          case "$VERSION" in
+            [0-9]*.[0-9]*.[0-9]*) ;;
+            *) VERSION="0.0.0-ci" ;;
+          esac
+          docker run --rm -u 0 -e BUILD_VERSION="$VERSION" \
+            -v "$PWD:/usr/src/tdesktop" -w /usr/src/tdesktop \
+            divegram_env \
+            bash -lc 'set -e
+              dnf install -y -q squashfs-tools xz ruby ruby-devel rpm-build
+              gem install --no-document fpm
+              cd /usr/src/tdesktop
+              BIN=""
+              for c in out-cc/bin/DiveGram out/bin/DiveGram out-cc/Release/DiveGram; do
+                [ -f "$c" ] && { BIN="$c"; break; }
+              done
+              [ -n "$BIN" ] || { echo "бинарь не найден" >&2; exit 1; }
+              echo "версия пакета: $BUILD_VERSION"
+              bash dist.sh "$BIN" "$BUILD_VERSION"'
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: |
+            dist/*.AppImage
+            dist/*.deb
+            dist/*.rpm
+            dist/*.pkg.tar.zst
+            dist/*.tar.xz
+            dist/CHECKSUMS.txt
+            dist/PKGBUILD
+      - name: Publish to Releases
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*.AppImage
+            dist/*.deb
+            dist/*.rpm
+            dist/*.pkg.tar.zst
+            dist/*.tar.xz
+            dist/CHECKSUMS.txt
+            dist/PKGBUILD
+          generate_release_notes: true
+          fail_on_unmatched_files: false
