@@ -7,8 +7,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      TDESKTOP_API_ID: ${{ vars.TDESKTOP_API_ID }}
-      TDESKTOP_API_HASH: ${{ vars.TDESKTOP_API_HASH }}
+      TDESKTOP_API_ID: ${{ secrets.TDESKTOP_API_ID }}
+      TDESKTOP_API_HASH: ${{ secrets.TDESKTOP_API_HASH }}
     steps:
       - uses: actions/checkout@v4
         with: { submodules: recursive }
