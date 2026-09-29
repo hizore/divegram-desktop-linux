@@ -1,6 +1,6 @@
 # DiveGram
 
-![DiveGram Лого](.github/DiveGram.png) ![AyuChan](.github/AyuChan.png)
+![DiveGram Лого](.github/DiveGram.png)
 
 [ [English](README.md)  | Русский ]
 
@@ -22,13 +22,9 @@
     <summary>Превью</summary>
     <table>
       <tr>
-        <td><img src='.github/demos/demo1.png' width='268' alt='Preferences'></td>
-        <td><img src='.github/demos/demo2.png' width='268' alt='DiveGram Options'></td>
-        <td><img src='.github/demos/demo3.png' width='268' alt='Message Filters'></td>
-      </tr>
-      <tr>
-        <td><img src='.github/demos/demo4.png' width='268' alt='Appearance'></td>
-        <td><img src='.github/demos/demo5.png' width='268' alt='Chats'></td>
+        <td><img src='.github/demos/history1.png' width='268' alt='История'></td>
+        <td><img src='.github/demos/history2.png' width='268' alt='Чат'></td>
+        <td><img src='.github/demos/settings.png' width='268' alt='Настройки'></td>
       </tr>
     </table>
   </details>
@@ -75,8 +71,6 @@ git clone --recursive https://github.com/yak1tori/divegram-desktop-linux.git
 ### Телеграм клиенты
 
 - [Telegram Desktop](https://github.com/telegramdesktop/tdesktop)
-- [Kotatogram](https://github.com/kotatogram/kotatogram-desktop)
-- [64Gram](https://github.com/TDesktop-x64/tdesktop)
 - [Forkgram](https://github.com/forkgram/tdesktop)
 
 ### Использованные библиотеки

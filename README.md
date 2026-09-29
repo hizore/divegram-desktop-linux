@@ -1,6 +1,6 @@
 # DiveGram
 
-![DiveGram Logo](.github/DiveGram.png) ![AyuChan](.github/AyuChan.png)
+![DiveGram Logo](.github/DiveGram.png)
 
 [ English  |   [Русский](README-RU.md) ]
 
@@ -23,13 +23,9 @@ And many more. See [Releases](https://github.com/yak1tori/divegram-desktop-linux
     <summary>Preview</summary>
     <table>
       <tr>
-        <td><img src='.github/demos/demo1.png' width='268' alt='Preferences'></td>
-        <td><img src='.github/demos/demo2.png' width='268' alt='DiveGram Options'></td>
-        <td><img src='.github/demos/demo3.png' width='268' alt='Message Filters'></td>
-      </tr>
-      <tr>
-        <td><img src='.github/demos/demo4.png' width='268' alt='Appearance'></td>
-        <td><img src='.github/demos/demo5.png' width='268' alt='Chats'></td>
+        <td><img src='.github/demos/history1.png' width='268' alt='History'></td>
+        <td><img src='.github/demos/history2.png' width='268' alt='Chat'></td>
+        <td><img src='.github/demos/settings.png' width='268' alt='Settings'></td>
       </tr>
     </table>
   </details>
@@ -76,8 +72,6 @@ are out of scope here.
 ### Telegram clients
 
 - [Telegram Desktop](https://github.com/telegramdesktop/tdesktop)
-- [Kotatogram](https://github.com/kotatogram/kotatogram-desktop)
-- [64Gram](https://github.com/TDesktop-x64/tdesktop)
 - [Forkgram](https://github.com/forkgram/tdesktop)
 
 ### Libraries used
