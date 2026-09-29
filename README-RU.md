@@ -15,7 +15,7 @@
 - Превью медиа и быстрая реакция при сильном нажатии на тачпад (macOS)
 - Улучшенный вид
 
-И многое другое. Посмотрите нашу [Документацию](https://docs.divegram.one/desktop/) для более подробной информации.
+И многое другое. Загрузки — на странице [Releases](https://github.com/yak1tori/divegram-desktop-linux/releases/latest).
 
 <h3>
   <details>
@@ -36,99 +36,39 @@
 
 ## Установка
 
-### Windows
+Этот репозиторий собирает Linux-версии для x86_64. Все файлы публикуются на
+странице [Releases](https://github.com/yak1tori/divegram-desktop-linux/releases/latest).
 
-#### Официальная версия
+| Формат | Файл | Установка |
+|---|---|---|
+| AppImage | `DiveGram-1.0.0-x86_64.AppImage` | `chmod +x` и запуск |
+| Debian / Ubuntu | `divegram_1.0.0_amd64.deb` | `sudo apt install ./divegram_1.0.0_amd64.deb` |
+| Fedora / openSUSE | `divegram-1.0.0.x86_64.rpm` | `sudo dnf install ./divegram-1.0.0.x86_64.rpm` |
+| Arch Linux | `divegram-1.0.0-1-x86_64.pkg.tar.zst` | `sudo pacman -U ./divegram-1.0.0-1-x86_64.pkg.tar.zst` |
+| Portable | `divegram-1.0.0-linux-x86_64.tar.xz` | распаковать и запустить `usr/bin/DiveGram` |
 
-Вы можете скачать готовый бинарный файл со вкладки [Releases](https://github.com/DiveGram/DiveGramDesktop/releases) или из
-[Телеграм канала](https://t.me/DiveGramReleases).
+В релизе есть `PKGBUILD` для сборки пакета в AUR. Файл `CHECKSUMS.txt` содержит
+SHA-256 для каждого артефакта.
 
-#### Winget
-
-```bash
-winget install RadolynLabs.DiveGramDesktop
-```
-
-#### Scoop
-
-```bash
-scoop bucket add extras
-scoop install divegram
-```
-
-#### Сборка вручную
-
-Следуйте [официальному руководству](https://github.com/DiveGram/DiveGramDesktop/blob/dev/docs/building-win-x64.md), если
-вы хотите собрать DiveGram сами.
-
-### macOS
-
-#### Официальная версия
-
-Вы можете скачать подписанный пакет со вкладки [Releases](https://github.com/DiveGram/DiveGramDesktop/releases).
-
-#### Homebrew
+### AppImage
 
 ```bash
-brew install --cask divegram
+chmod +x DiveGram-1.0.0-x86_64.AppImage
+./DiveGram-1.0.0-x86_64.AppImage
 ```
 
-### Arch Linux
+Установка и права root не нужны.
 
-#### Из исходников (рекомендованный способ)
+### Сборка из исходников
 
-Установите `divegram-desktop` из [AUR](https://aur.archlinux.org/packages/divegram-desktop).
-
-#### Готовые бинарники
-
-Установите `divegram-desktop-bin` из [AUR](https://aur.archlinux.org/packages/divegram-desktop-bin).
-
-Примечание: данный пакет собирается не нами.
-
-### NixOS
-
-#### Флейк (рекомендуется)
-
-Установите `divegram-desktop` из [ndfined-crp/divegram-desktop](https://github.com/ndfined-crp/divegram-desktop)
-
-#### Nixpkgs
-
-Установите `divegram-desktop` из [nixpkgs](https://search.nixos.org/packages?channel=unstable&show=divegram-desktop)
-
-### ALT Linux
-
-[Sisyphus](https://packages.altlinux.org/en/sisyphus/srpms/divegram-desktop/)
-
-### Gentoo Linux
-
-Инструкцию по установке можно найти в [этом репозитории](https://codeberg.org/OverLessArtem/divegram-ebuild-gentoo).
-
-### Void Linux
-Инструкцию по установке можно найти в [этом репозитории](https://codeberg.org/OverLessArtem/divegram-template-void)
-
-### EPM
-
-`epm play divegram`
-
-### Fedora
-
-Из репозитория [RPM Fusion](https://admin.rpmfusion.org/pkgdb/package/free/divegram-desktop/).
+Смотрите [docs/building-linux.md](docs/building-linux.md). Обязательно нужны сабмодули:
 
 ```bash
-dnf install divegram-desktop
+git clone --recursive https://github.com/yak1tori/divegram-desktop-linux.git
 ```
 
-### Любой другой Линукс дистрибутив
-
-Flatpak: https://github.com/0FL01/DiveGramDesktop-flatpak
-
-Или следуйте [официальному руководству](https://github.com/DiveGram/DiveGramDesktop/blob/dev/docs/building-linux.md).
-
-## Пожертвования
-
-Вам нравится использовать **DiveGram**? Оставьте нам чаевые!
-
-[Здесь доступные варианты.](https://docs.divegram.one/donate/)
+Другие платформы в этом репозитории не поддерживаются. Windows и macOS не входят
+в область проекта.
 
 ## Использованные материалы
 

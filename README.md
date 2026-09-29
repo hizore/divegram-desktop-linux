@@ -16,7 +16,7 @@
 - Media preview & quick reaction on force click (macOS)
 - Enhanced appearance
 
-And many more. Check out our [Documentation](https://docs.divegram.one/desktop/).
+And many more. See [Releases](https://github.com/yak1tori/divegram-desktop-linux/releases/latest) for downloads.
 
 <h3>
   <details>
@@ -37,99 +37,39 @@ And many more. Check out our [Documentation](https://docs.divegram.one/desktop/)
 
 ## Downloads
 
-### Windows
+This repository ships Linux builds for x86_64. All artifacts are published on the
+[Releases page](https://github.com/yak1tori/divegram-desktop-linux/releases/latest).
 
-#### Official
+| Format | File | Install |
+|---|---|---|
+| AppImage | `DiveGram-1.0.0-x86_64.AppImage` | `chmod +x` and run |
+| Debian / Ubuntu | `divegram_1.0.0_amd64.deb` | `sudo apt install ./divegram_1.0.0_amd64.deb` |
+| Fedora / openSUSE | `divegram-1.0.0.x86_64.rpm` | `sudo dnf install ./divegram-1.0.0.x86_64.rpm` |
+| Arch Linux | `divegram-1.0.0-1-x86_64.pkg.tar.zst` | `sudo pacman -U ./divegram-1.0.0-1-x86_64.pkg.tar.zst` |
+| Portable | `divegram-1.0.0-linux-x86_64.tar.xz` | extract and run `usr/bin/DiveGram` |
 
-You can download prebuilt Windows binary from [Releases tab](https://github.com/DiveGram/DiveGramDesktop/releases) or from
-the [Telegram channel](https://t.me/DiveGramReleases).
+`PKGBUILD` is included in the release for AUR packaging. `CHECKSUMS.txt` contains
+SHA-256 for every artifact.
 
-#### Winget
-
-```bash
-winget install RadolynLabs.DiveGramDesktop
-```
-
-#### Scoop
-
-```bash
-scoop bucket add extras
-scoop install divegram
-```
-
-#### Self-built
-
-Follow [official guide](https://github.com/DiveGram/DiveGramDesktop/blob/dev/docs/building-win-x64.md) if you want to
-build by yourself.
-
-### macOS
-
-#### Official
-
-You can download prebuilt macOS package from [Releases tab](https://github.com/DiveGram/DiveGramDesktop/releases).
-
-#### Homebrew
+### AppImage
 
 ```bash
-brew install --cask divegram
+chmod +x DiveGram-1.0.0-x86_64.AppImage
+./DiveGram-1.0.0-x86_64.AppImage
 ```
 
-### Arch Linux
+No installation or root access required.
 
-#### From source (recommended)
+### Build from source
 
-Install `divegram-desktop` from [AUR](https://aur.archlinux.org/packages/divegram-desktop).
-
-#### Prebuilt binaries
-
-Install `divegram-desktop-bin` from [AUR](https://aur.archlinux.org/packages/divegram-desktop-bin).
-
-Note: these binaries aren't officially maintained by us.
-
-### NixOS
-
-#### Flake (recommended)
-
-Install `divegram-desktop` from [ndfined-crp/divegram-desktop](https://github.com/ndfined-crp/divegram-desktop)
-
-#### Nixpkgs
-
-Install `divegram-desktop` from [nixpkgs](https://search.nixos.org/packages?channel=unstable&show=divegram-desktop)
-
-### ALT Linux
-
-[Sisyphus](https://packages.altlinux.org/en/sisyphus/srpms/divegram-desktop/)
-
-### Gentoo Linux
-
-See [this repository](https://codeberg.org/OverLessArtem/divegram-ebuild-gentoo) for installation manual.
-
-### Void Linux
-See [this repository](https://codeberg.org/OverLessArtem/divegram-template-void) for installation manual.
-
-### EPM
-
-`epm play divegram`
-
-### Fedora
-
-From [RPM Fusion](https://admin.rpmfusion.org/pkgdb/package/free/divegram-desktop/) repository.
+See [docs/building-linux.md](docs/building-linux.md). Submodules are required:
 
 ```bash
-dnf install divegram-desktop
+git clone --recursive https://github.com/yak1tori/divegram-desktop-linux.git
 ```
 
-### Any other Linux distro
-
-Flatpak: https://github.com/0FL01/DiveGramDesktop-flatpak
-
-Or follow the [official guide](https://github.com/DiveGram/DiveGramDesktop/blob/dev/docs/building-linux.md).
-
-## Donation
-
-Enjoy using **DiveGram**? Consider sending us a tip!
-
-[Here's available methods.](https://docs.divegram.one/donate/)
+Other platforms are not maintained in this repository. Windows and macOS builds
+are out of scope here.
 
 ## Credits
 

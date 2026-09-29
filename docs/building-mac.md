@@ -17,7 +17,7 @@ Go to ***BuildPath*** and run
 
     sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
 
-    git clone --recursive https://github.com/DiveGram/DiveGramDesktop.git tdesktop
+    git clone --recursive https://github.com/yak1tori/divegram-desktop-linux.git tdesktop
     ./tdesktop/Telegram/build/prepare/mac.sh
 
 ### Building the project
