@@ -230,6 +230,10 @@ package() {
         "\$pkgdir/usr/share/icons/hicolor/512x512/apps/com.divegram.desktop.png"
     install -Dm644 "\$srcdir/divegram/usr/share/metainfo/com.divegram.desktop.metainfo.xml" \
         "\$pkgdir/usr/share/metainfo/com.divegram.desktop.metainfo.xml"
+    # Desktop entry объявляет DBusActivatable=true: без .service запуск из
+    # меню приложений падает с "The name is not activatable".
+    install -Dm644 "\$srcdir/divegram/usr/share/dbus-1/services/com.divegram.desktop.service" \
+        "\$pkgdir/usr/share/dbus-1/services/com.divegram.desktop.service"
     # библиотеки в зависимости поймали системные; если нужен полный самосодержащий пакет,
     # распакуй .tar.xz рядом и перенеси в opt/divegram + скрипт-лаунчер ld_library_path
 }
