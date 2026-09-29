@@ -68,7 +68,7 @@ docker run --rm -u 0 -v "$PWD:/usr/src/tdesktop" -w /usr/src/tdesktop \
     divegram_env \
     bash -lc 'dnf install -y squashfs-tools xz ruby ruby-devel rpm-build &&
               gem install --no-document fpm &&
-              bash dist.sh out-cc/bin/DiveGram 1.0.0'
+              bash dist.sh out-cc/bin/DiveGram 7.0.9'
 ```
 
 Results and `CHECKSUMS.txt` are written to `dist/`. The Arch package is

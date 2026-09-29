@@ -37,11 +37,11 @@
 
 | Формат | Файл | Установка |
 |---|---|---|
-| AppImage | `DiveGram-1.0.0-x86_64.AppImage` | `chmod +x` и запуск |
-| Debian / Ubuntu | `divegram_1.0.0_amd64.deb` | `sudo apt install ./divegram_1.0.0_amd64.deb` |
-| Fedora / openSUSE | `divegram-1.0.0.x86_64.rpm` | `sudo dnf install ./divegram-1.0.0.x86_64.rpm` |
-| Arch Linux | `divegram-1.0.0-1-x86_64.pkg.tar.zst` | `sudo pacman -U ./divegram-1.0.0-1-x86_64.pkg.tar.zst` |
-| Portable | `divegram-1.0.0-linux-x86_64.tar.xz` | распаковать и запустить `usr/bin/DiveGram` |
+| AppImage | `DiveGram-7.0.9-x86_64.AppImage` | `chmod +x` и запуск |
+| Debian / Ubuntu | `divegram_7.0.9_amd64.deb` | `sudo apt install ./divegram_7.0.9_amd64.deb` |
+| Fedora / openSUSE | `divegram-7.0.9.x86_64.rpm` | `sudo dnf install ./divegram-7.0.9.x86_64.rpm` |
+| Arch Linux | `divegram-7.0.9-1-x86_64.pkg.tar.zst` | `sudo pacman -U ./divegram-7.0.9-1-x86_64.pkg.tar.zst` |
+| Portable | `divegram-7.0.9-linux-x86_64.tar.xz` | распаковать и запустить `usr/bin/DiveGram` |
 
 В релизе есть `PKGBUILD` для сборки пакета в AUR. Файл `CHECKSUMS.txt` содержит
 SHA-256 для каждого артефакта.
@@ -49,8 +49,8 @@ SHA-256 для каждого артефакта.
 ### AppImage
 
 ```bash
-chmod +x DiveGram-1.0.0-x86_64.AppImage
-./DiveGram-1.0.0-x86_64.AppImage
+chmod +x DiveGram-7.0.9-x86_64.AppImage
+./DiveGram-7.0.9-x86_64.AppImage
 ```
 
 Установка и права root не нужны.

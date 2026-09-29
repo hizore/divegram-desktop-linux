@@ -10,7 +10,7 @@
 <stop offset="1" stop-color="#D34BED"/>
 </radialGradient>
 <clipPath id="clip0_21_22">
-<rect width="512" height="512" fill="white"/>
+<circle cx="256" cy="256" r="256" fill="white"/>
 </clipPath>
 </defs>
 </svg>

@@ -38,11 +38,11 @@ This repository ships Linux builds for x86_64. All artifacts are published on th
 
 | Format | File | Install |
 |---|---|---|
-| AppImage | `DiveGram-1.0.0-x86_64.AppImage` | `chmod +x` and run |
-| Debian / Ubuntu | `divegram_1.0.0_amd64.deb` | `sudo apt install ./divegram_1.0.0_amd64.deb` |
-| Fedora / openSUSE | `divegram-1.0.0.x86_64.rpm` | `sudo dnf install ./divegram-1.0.0.x86_64.rpm` |
-| Arch Linux | `divegram-1.0.0-1-x86_64.pkg.tar.zst` | `sudo pacman -U ./divegram-1.0.0-1-x86_64.pkg.tar.zst` |
-| Portable | `divegram-1.0.0-linux-x86_64.tar.xz` | extract and run `usr/bin/DiveGram` |
+| AppImage | `DiveGram-7.0.9-x86_64.AppImage` | `chmod +x` and run |
+| Debian / Ubuntu | `divegram_7.0.9_amd64.deb` | `sudo apt install ./divegram_7.0.9_amd64.deb` |
+| Fedora / openSUSE | `divegram-7.0.9.x86_64.rpm` | `sudo dnf install ./divegram-7.0.9.x86_64.rpm` |
+| Arch Linux | `divegram-7.0.9-1-x86_64.pkg.tar.zst` | `sudo pacman -U ./divegram-7.0.9-1-x86_64.pkg.tar.zst` |
+| Portable | `divegram-7.0.9-linux-x86_64.tar.xz` | extract and run `usr/bin/DiveGram` |
 
 `PKGBUILD` is included in the release for AUR packaging. `CHECKSUMS.txt` contains
 SHA-256 for every artifact.
@@ -50,8 +50,8 @@ SHA-256 for every artifact.
 ### AppImage
 
 ```bash
-chmod +x DiveGram-1.0.0-x86_64.AppImage
-./DiveGram-1.0.0-x86_64.AppImage
+chmod +x DiveGram-7.0.9-x86_64.AppImage
+./DiveGram-7.0.9-x86_64.AppImage
 ```
 
 No installation or root access required.
