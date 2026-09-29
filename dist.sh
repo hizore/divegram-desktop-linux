@@ -44,6 +44,8 @@ if [ -z "$DESKTOP" ]; then
 fi
 METAINFO="${ROOT}/lib/xdg/com.divegram.desktop.metainfo.xml"
 [ -f "$METAINFO" ] || METAINFO=""
+DBUS_SERVICE="${ROOT}/lib/xdg/com.divegram.desktop.service"
+[ -f "$DBUS_SERVICE" ] || DBUS_SERVICE=""
 ICON=""
 for c in "${ROOT}/Telegram/Resources/icons/tg/icon_512.png" \
          "${ROOT}/Telegram/Resources/art/divegram/icon_512.png" \
@@ -61,6 +63,25 @@ if [ ! -f "$BIN" ]; then
     echo "Сначала собери: см. docker build (README 'Сборка')." >&2
     exit 1
 fi
+
+# --- Защита от выпуска бинаря с тестовыми кредитами -----------------------
+# CMake подставляет 17349/тест-хэш по умолчанию (telegram_options.cmake).
+# Такой бинарь стартует, но логин отдаёт APP_ID_INVALID, поэтому релиз
+# останавливаем на входе, а не после жалоб пользователей.
+for BAD_HASH in \
+    344583e45741c457fe1862106095a5eb \
+    344583e45741c45740a152844fa39115
+do
+    # grep -c, а не -q: под `set -o pipefail` опция -q рвёт пайп по SIGPIPE
+    # и условие трактуется как ложное, т.е. проверка молча ничего не ловит.
+    HASH_HITS="$(strings -a "$BIN" 2>/dev/null | grep -cF "$BAD_HASH" || true)"
+    if [ "${HASH_HITS:-0}" -gt 0 ] 2>/dev/null; then
+        echo "ОШИБКА: $BIN собран с тестовыми API-кредами CMake." >&2
+        echo "Логин вернёт APP_ID_INVALID. Пересобери со своими:" >&2
+        echo "  cmake -B out-cc -DTDESKTOP_API_ID=<id> -DTDESKTOP_API_HASH=<hash>" >&2
+        exit 1
+    fi
+done
 
 # чистая рабочая папка пакетов
 rm -rf "$PKGDIR"
@@ -86,6 +107,13 @@ make_tree() {
     if [ -f "$METAINFO" ]; then
         mkdir -p "$root/usr/share/metainfo"
         install -m0644 "$METAINFO" "$root/usr/share/metainfo/${APP_ID}.metainfo.xml"
+    fi
+    # D-Bus service обязателен: desktop entry объявляет DBusActivatable=true,
+    # и без .service запуск из меню падает с "The name is not activatable".
+    if [ -f "$DBUS_SERVICE" ]; then
+        mkdir -p "$root/usr/share/dbus-1/services"
+        sed 's|@CMAKE_INSTALL_FULL_BINDIR@|/usr/bin|g' "$DBUS_SERVICE" \
+            > "$root/usr/share/dbus-1/services/${APP_ID}.service"
     fi
 }
 
