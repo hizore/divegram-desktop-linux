@@ -554,7 +554,7 @@ bool ElasticScroll::overscrollPullSide(int side) const {
 }
 
 float64 ElasticScroll::overscrollPullDistance(int side) const {
-	if (!overscrollPullSide(side)) {
+	if (!overscrollSpringSide(side)) {
 		return 0.;
 	}
 	const auto distance = (side < 0)
