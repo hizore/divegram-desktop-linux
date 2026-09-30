@@ -27,9 +27,14 @@ jobs:
           docker build -t divegram_env -f Telegram/build/docker/centos_env/Dockerfile.generated .
       - name: Configure (source root, API vars, Ninja Release)
         run: |
-          docker run --rm -u 0 -v "$PWD:/usr/src/tdesktop" -w /usr/src/tdesktop \
+          docker run --rm -u 0 \
+            -e TDESKTOP_API_ID -e TDESKTOP_API_HASH \
+            -v "$PWD:/usr/src/tdesktop" -w /usr/src/tdesktop \
             divegram_env \
-            bash -lc 'set -e; rm -rf /usr/src/tdesktop/out-cc && mkdir -p /usr/src/tdesktop/out-cc && \
+            bash -lc 'set -e
+              [ -n "$TDESKTOP_API_ID" ] || { echo "::error::внутри контейнера TDESKTOP_API_ID пуст" >&2; exit 1; }
+              [ -n "$TDESKTOP_API_HASH" ] || { echo "::error::внутри контейнера TDESKTOP_API_HASH пуст" >&2; exit 1; }
+              rm -rf /usr/src/tdesktop/out-cc && mkdir -p /usr/src/tdesktop/out-cc && \
               cmake -S /usr/src/tdesktop -B /usr/src/tdesktop/out-cc -G Ninja \
                 -DCMAKE_BUILD_TYPE=Release \
                 -DTDESKTOP_API_ID="$TDESKTOP_API_ID" \
