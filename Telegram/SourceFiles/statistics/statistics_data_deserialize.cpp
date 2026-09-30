@@ -115,7 +115,12 @@ Data::StatisticalChart StatisticalChartFromJSON(const QByteArray &json) {
 		}
 		const auto defaultZoomIt = subchart.constFind(u"defaultZoom"_q);
 		auto min = int(0);
-		auto max = int(result.x.size() - 1);
+		// result.x may legitimately be empty (a chart with lines but no
+		// x column), so size() - 1 must not underflow the unsigned size_type
+		// before the narrowing cast.
+		auto max = result.x.empty()
+			? int(0)
+			: int(result.x.size() - 1);
 		if (defaultZoomIt != subchart.constEnd()) {
 			if (const auto array = defaultZoomIt->toArray(); !array.empty()) {
 				const auto minValue = array.first().toDouble();
