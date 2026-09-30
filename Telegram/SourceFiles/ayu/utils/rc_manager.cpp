@@ -6,6 +6,8 @@
 // Copyright @Radolyn, 2026
 #include "ayu/utils/rc_manager.h"
 
+#include <algorithm>
+
 #include <QJsonArray>
 #include <qjsondocument.h>
 #include <QTimer>
@@ -128,33 +130,35 @@ bool RCManager::applyResponse(const QByteArray &response) {
 	const auto supporterChannels = root.value("supporterChannels").toArray();
 	const auto customBadges = root.value("customBadges").toArray();
 
-	_developers.clear();
-	_officialChannels.clear();
-	_supporters.clear();
-	_supporterChannels.clear();
-	_customBadges.clear();
+	// Parse into locals first: a truncated or schema-changed payload must not
+	// wipe the compiled-in defaults while it is still being validated.
+	auto parsedDevelopers = decltype(_developers){};
+	auto parsedOfficialChannels = decltype(_officialChannels){};
+	auto parsedSupporters = decltype(_supporters){};
+	auto parsedSupporterChannels = decltype(_supporterChannels){};
+	auto parsedCustomBadges = decltype(_customBadges){};
 
 	for (const auto &developer : developers) {
 		if (const auto id = developer.toVariant().toLongLong()) {
-			_developers.insert(id);
+			parsedDevelopers.insert(id);
 		}
 	}
 
 	for (const auto &channel : officialChannels) {
 		if (const auto id = channel.toVariant().toLongLong()) {
-			_officialChannels.insert(id);
+			parsedOfficialChannels.insert(id);
 		}
 	}
 
 	for (const auto &supporter : supporters) {
 		if (const auto id = supporter.toVariant().toLongLong()) {
-			_supporters.insert(id);
+			parsedSupporters.insert(id);
 		}
 	}
 
 	for (const auto &channel : supporterChannels) {
 		if (const auto id = channel.toVariant().toLongLong()) {
-			_supporterChannels.insert(id);
+			parsedSupporterChannels.insert(id);
 		}
 	}
 
@@ -181,12 +185,27 @@ bool RCManager::applyResponse(const QByteArray &response) {
 		if (const auto text = badgeData.value("text").toString(); !text.isEmpty()) {
 			customBadge.text = text;
 		}
-		_customBadges[id] = customBadge;
+		parsedCustomBadges[id] = customBadge;
 	}
 
 	if (const auto donateUsername = root.value("donateUsername"); donateUsername.isString()) {
-		if (const auto value = donateUsername.toString(); !value.isEmpty()) {
-			_donateUsername = value;
+		if (auto value = donateUsername.toString(); !value.isEmpty()) {
+			// The value is remote-controlled and ends up as a clickable
+			// t.me link in the support box, so accept only a plain username
+			// instead of trusting the payload shape.
+			if (value.startsWith('@')) {
+				value.remove(0, 1);
+			}
+			const auto valid = !value.isEmpty()
+				&& (value.size() <= 64)
+				&& std::ranges::all_of(value, [](const QChar c) {
+					return c.isLetterOrNumber() || (c == u'_');
+				});
+			if (valid) {
+				_donateUsername = '@' + value;
+			} else {
+				LOG(("RCManager: ignoring invalid donateUsername"));
+			}
 		}
 	}
 	if (const auto donateAmountUsd = root.value("donateAmountUsd"); donateAmountUsd.isString()) {
@@ -204,6 +223,22 @@ bool RCManager::applyResponse(const QByteArray &response) {
 			_donateAmountRub = value;
 		}
 	}
+
+	// Only adopt the lists when the payload actually carries something. An
+	// empty object is a truncated or schema-changed answer, not a request to
+	// drop every official badge.
+	if (parsedDevelopers.empty() && parsedOfficialChannels.empty()
+		&& parsedSupporters.empty() && parsedSupporterChannels.empty()
+		&& parsedCustomBadges.empty()) {
+		LOG(("RCManager: response carried no usable entries, keeping defaults"));
+		return false;
+	}
+
+	_developers = std::move(parsedDevelopers);
+	_officialChannels = std::move(parsedOfficialChannels);
+	_supporters = std::move(parsedSupporters);
+	_supporterChannels = std::move(parsedSupporterChannels);
+	_customBadges = std::move(parsedCustomBadges);
 
 	initialized = true;
 
