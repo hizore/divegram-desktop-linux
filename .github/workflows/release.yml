@@ -41,7 +41,7 @@ jobs:
                 -DTDESKTOP_API_HASH="$TDESKTOP_API_HASH"'
       - name: Build Release
         run: |
-          docker run --rm -v "$PWD:/usr/src/tdesktop" -w /usr/src/tdesktop \
+          docker run --rm -u 0 -v "$PWD:/usr/src/tdesktop" -w /usr/src/tdesktop \
             divegram_env \
             cmake --build /usr/src/tdesktop/out-cc --config Release --target Telegram -j"$(nproc)"
       - name: Package (AppImage/deb/rpm/pkg/tar.xz)
