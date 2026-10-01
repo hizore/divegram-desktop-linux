@@ -39,6 +39,8 @@
 #include <QTextDocument>
 #include <QTextBlock>
 #include <ctime>
+#include <array>
+#include <thread>
 
 namespace Media::Player {
 namespace {
@@ -149,9 +151,16 @@ QString HttpGetBytes(
 		const QString &url,
 		const QList<QPair<QString, QString>> &headers = {}) {
 	QStringList args = { u"-s"_q, u"-L"_q, u"--max-time"_q, u"12"_q,
+		u"--connect-timeout"_q, u"6"_q,
+		u"--fail-with-body"_q,
 		u"-A"_q, u"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/124.0 Safari/537.36"_q };
 	for (const auto &[k, v] : headers) {
 		args << u"-H"_q << (k + u": " + v);
+	}
+	// Honour the proxy the desktop session is configured with, so the same
+	// request works with and without a VPN or system proxy in place.
+	if (!qEnvironmentVariableIsSet("https_proxy")) {
+		args << u"--noproxy"_q << u"*"_q;
 	}
 	args << url;
 	QProcess proc;
@@ -161,6 +170,11 @@ QString HttpGetBytes(
 	}
 	if (!proc.waitForFinished(15000)) {
 		proc.kill();
+		proc.waitForFinished(1000);
+		return QString();
+	}
+	if (proc.exitStatus() != QProcess::NormalExit || proc.exitCode() != 0) {
+		// HTTP error, blocked request or DNS failure: no lyrics here.
 		return QString();
 	}
 	const auto data = proc.readAllStandardOutput();
@@ -407,13 +421,43 @@ QString FetchSyncedLyrics(not_null<DocumentData*> document) {
 	const auto [artist, track] = TrackArtistTitle(document);
 	if (track.isEmpty()) return QString();
 
-	const auto y = FetchYandexLrc(artist, track);
-	if (!y.isEmpty()) return y;
-	const auto l = FetchLrcLibLyrics(artist, track);
-	if (!l.isEmpty()) return l;
-	const auto n = FetchNeteaseLrc(artist, track);
-	if (!n.isEmpty()) return n;
-	return FetchOvhLyrics(artist, track);
+	// Query every provider at once: a blocked or slow endpoint must not
+	// hold the window in "Searching lyrics..." for the sum of all timeouts.
+	constexpr auto kFetchCount = 4;
+	std::array<QString, kFetchCount> results;
+	std::array<std::thread, kFetchCount> threads;
+
+	threads[0] = std::thread([=, &results] {
+		results[0] = FetchYandexLrc(artist, track);
+	});
+	threads[1] = std::thread([=, &results] {
+		results[1] = FetchLrcLibLyrics(artist, track);
+	});
+	threads[2] = std::thread([=, &results] {
+		results[2] = FetchNeteaseLrc(artist, track);
+	});
+	threads[3] = std::thread([=, &results] {
+		results[3] = FetchOvhLyrics(artist, track);
+	});
+	for (auto &t : threads) {
+		if (t.joinable()) {
+			t.join();
+		}
+	}
+
+	// Prefer the providers that return timestamped lyrics, then fall back to
+	// plain text so a result is still better than an endless spinner.
+	QString plain;
+	for (const auto &result : results) {
+		if (result.isEmpty()) continue;
+		if (HasTimedLines(ParseLrc(result))) {
+			return result;
+		}
+		if (plain.isEmpty()) {
+			plain = result;
+		}
+	}
+	return plain;
 }
 
 bool HasTimedLines(const std::vector<LrcLine> &lines) {
