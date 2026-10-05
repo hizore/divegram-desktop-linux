@@ -1,8 +1,5 @@
 name: Windows x64 build
 
-# Ручной запуск: вкладка Actions -> "Windows x64 build" -> Run workflow.
-# Адаптировано из .github/workflows/win.yml репозитория telegramdesktop/tdesktop.
-
 on:
   workflow_dispatch:
     inputs:
@@ -53,6 +50,12 @@ jobs:
             echo "::error::В репозитории нет Telegram/build/prepare/win.bat или Telegram/configure.bat. Скопируйте их (и Telegram/build/prepare/) из telegramdesktop/tdesktop той же версии."
             exit 1
           fi
+
+      - name: Patch prepare.py (diffutils).
+        shell: bash
+        run: |
+          sed -i 's/mingw-w64-x86_64-diffutils/diffutils/' "$TBUILD/$REPO_NAME/Telegram/build/prepare/prepare.py"
+          grep -n "diffutils" "$TBUILD/$REPO_NAME/Telegram/build/prepare/prepare.py"
 
       - name: First set up.
         shell: bash
